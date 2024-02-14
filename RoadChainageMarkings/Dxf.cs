@@ -24,7 +24,7 @@ namespace RoadChainageMarkings
 				var lines = frames.ConvertAll(x => x.CreateLine(1.2));
 				var texts = frames.ConvertAll(x => x.CreateText());
 				dxf.Entities.Add(lines);
-				dxf.Entities.Add(lines);
+				dxf.Entities.Add(texts);
 			}
 
 			dxf.DrawingVariables.InsUnits = netDxf.Units.DrawingUnits.Meters;
