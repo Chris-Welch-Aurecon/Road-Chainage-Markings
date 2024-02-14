@@ -19,11 +19,11 @@ static class AutomateFunction
 
     Console.WriteLine("Received version: " + commitObject);
 
-    var count = commitObject
-      .Flatten()
-      .Count(b => b.speckle_type == functionInputs.SpeckleTypeToCount);
+        var polylines = commitObject
+          .Flatten()
+          .Where(b => b is Polyline)
+          .Cast<Polyline>();
 
-    Console.WriteLine($"Counted {count} objects");
-    automationContext.MarkRunSuccess($"Counted {count} objects");
+    automationContext.MarkRunSuccess($"Counted {polylines.Count()} polylines with {polylines.SelectMany(x => x.GetPoints()).Count()} total points.");
   }
 }
