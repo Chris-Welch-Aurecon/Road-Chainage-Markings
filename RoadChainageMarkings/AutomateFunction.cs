@@ -1,5 +1,6 @@
 using Objects;
 using Objects.Geometry;
+using RoadChainageMarkings;
 using Speckle.Automate.Sdk;
 using Speckle.Core.Logging;
 using Speckle.Core.Models.Extensions;
@@ -24,6 +25,6 @@ static class AutomateFunction
           .Where(b => b is Polyline)
           .Cast<Polyline>();
 
-    automationContext.MarkRunSuccess($"Counted {polylines.Count()} polylines with {polylines.SelectMany(x => x.GetPoints()).Count()} total points.");
+    automationContext.MarkRunSuccess($"Counted {polylines.Count()} polylines with {polylines.SelectMany(x => x.GetPoints()).Count()} total points. When divided by {functionInputs.Spacing}, this resulted in {polylines.SelectMany(x => x.FramesAtDistance(functionInputs.Spacing)).Count()} frames.");
   }
 }
