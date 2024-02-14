@@ -10,7 +10,7 @@ namespace RoadChainageMarkings
 	internal static class Geometry
 	{
 
-		internal record PointDirection(Point Point, Vector Vector)
+		internal record PointDirection(Point Point, Vector Vector, double Distance)
 		{
 
 		}
@@ -21,7 +21,7 @@ namespace RoadChainageMarkings
 			double interpolatedY = startPoint.y + (endPoint.y - startPoint.y) * factor;
 			double interpolatedZ = startPoint.z + (endPoint.z - startPoint.z) * factor;
 
-			return new Point(interpolatedX, interpolatedY, interpolatedZ,units);
+			return new Point(interpolatedX, interpolatedY, interpolatedZ, units);
 		}
 
 		internal static List<PointDirection> FramesAtDistance(this Polyline p, double distance)
@@ -31,6 +31,7 @@ namespace RoadChainageMarkings
 			var pairwise = points.Zip(points.Skip(1));
 
 			var distanceUntilNextPoint = distance;
+			var totalDistance = 0.0;
 
 			var frames = new List<PointDirection>();
 
@@ -42,14 +43,18 @@ namespace RoadChainageMarkings
 
 				if (distanceUntilNextPoint <= d)
 				{
-					var intermediatePoint = a.Interpolate(b, distanceUntilNextPoint / d,p.units);
-					frames.Add(new(intermediatePoint, new Vector(b.x - a.x, b.y - a.y, b.z - a.z, p.units)));
+					// need to fix this so multiple divisions can happen on a segment
+
+					var intermediatePoint = a.Interpolate(b, distanceUntilNextPoint / d, p.units);
+					frames.Add(new(intermediatePoint, new Vector(b.x - a.x, b.y - a.y, b.z - a.z, p.units), distanceUntilNextPoint));
 					distanceUntilNextPoint = distance;
 				}
 				else
 				{
 					distanceUntilNextPoint -= d;
 				}
+
+				totalDistance += distanceUntilNextPoint;
 			}
 
 			return frames;
