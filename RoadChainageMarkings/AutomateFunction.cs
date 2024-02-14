@@ -27,6 +27,8 @@ static class AutomateFunction
 
 		var outputFile = $"out/Aligment Markers.dxf";
 
+		Directory.CreateDirectory("out");
+
 		polylines.SaveToDxf(functionInputs.Spacing, outputFile);
 
 		Console.WriteLine("Storing file");
