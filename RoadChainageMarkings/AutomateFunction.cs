@@ -5,7 +5,7 @@ using Speckle.Automate.Sdk;
 using Speckle.Core.Logging;
 using Speckle.Core.Models.Extensions;
 
-static class AutomateFunction
+public static class AutomateFunction
 {
 	public static async Task Run(
 	  AutomationContext automationContext,
@@ -33,6 +33,8 @@ static class AutomateFunction
 
 		Console.WriteLine("Storing file");
 		await automationContext.StoreFileResult(outputFile);
+
+		automationContext.AttachResultToObjects(Speckle.Automate.Sdk.Schema.ObjectResultLevel.Info, "Alignments", polylines.Select(x => x.id), "Processed curves");
 
 		automationContext.MarkRunSuccess($"Counted {polylines.Count()} polylines with {polylines.SelectMany(x => x.GetPoints()).Count()} total points. When divided by {functionInputs.Spacing}, this resulted in {polylines.SelectMany(x => x.FramesAtDistance(functionInputs.Spacing)).Count()} frames.");
 	}

@@ -39,6 +39,7 @@ namespace RoadChainageMarkings
 			{
 				var d = a.DistanceTo(b);
 
+
 				if (d == 0.0) continue;
 
 				if (distanceUntilNextPoint <= d)
@@ -46,7 +47,14 @@ namespace RoadChainageMarkings
 					// need to fix this so multiple divisions can happen on a segment
 
 					var intermediatePoint = a.Interpolate(b, distanceUntilNextPoint / d, p.units);
-					frames.Add(new(intermediatePoint, new Vector(b.x - a.x, b.y - a.y, b.z - a.z, p.units), distanceUntilNextPoint));
+					frames.Add(new(
+						intermediatePoint,
+						new Vector(
+							(a.x - b.x) / d, // divide by d should normalise it??? 
+							(a.y - b.y) / d,
+							(a.z - b.z) / d,
+							p.units),
+						distanceUntilNextPoint));
 					distanceUntilNextPoint = distance;
 				}
 				else

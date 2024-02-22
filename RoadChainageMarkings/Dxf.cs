@@ -57,7 +57,6 @@ namespace RoadChainageMarkings
 		{
 			var (x, y, z, t, u, v, w) = (pd.Point.x, pd.Point.y, pd.Point.z, pd.Distance, pd.Vector.x, pd.Vector.y, pd.Vector.z);
 
-
 			var textEntity = new netDxf.Entities.Text(t.ToString(), new Vector3(x, y, z), height: 1.2)
 			{
 				Color = new AciColor(1, 1, 1),
