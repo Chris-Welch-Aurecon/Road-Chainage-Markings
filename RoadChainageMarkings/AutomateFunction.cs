@@ -4,6 +4,7 @@ using RoadChainageMarkings;
 using Speckle.Automate.Sdk;
 using Speckle.Core.Logging;
 using Speckle.Core.Models.Extensions;
+using Speckle.Core.Models.GraphTraversal;
 
 public static class AutomateFunction
 {
@@ -20,10 +21,14 @@ public static class AutomateFunction
 
 		Console.WriteLine("Received version: " + commitObject);
 
-		var polylines = commitObject
+		IEnumerable<Curve> curves = commitObject
 		  .Flatten()
-		  .Where(b => b is Polyline)
-		  .Cast<Polyline>();
+		  .Where(b => b is Curve)
+		  .Select(b => (Curve)b);
+
+		IEnumerable<Polyline> polylines = curves
+			.Select(x => x.TryGetDisplayValue<Polyline>())
+			.SelectMany(x => x ?? new List<Polyline>() { });
 
 		var outputFile = $"out/Aligment Markers.dxf";
 
@@ -34,7 +39,11 @@ public static class AutomateFunction
 		Console.WriteLine("Storing file");
 		await automationContext.StoreFileResult(outputFile);
 
-		automationContext.AttachResultToObjects(Speckle.Automate.Sdk.Schema.ObjectResultLevel.Info, "Alignments", polylines.Select(x => x.id), "Processed curves");
+		automationContext.AttachResultToObjects(
+			Speckle.Automate.Sdk.Schema.ObjectResultLevel.Info, 
+			"Alignments",
+			curves.Select(x => x.id), 
+			"Processed curves");
 
 		automationContext.MarkRunSuccess($"Counted {polylines.Count()} polylines with {polylines.SelectMany(x => x.GetPoints()).Count()} total points. When divided by {functionInputs.Spacing}, this resulted in {polylines.SelectMany(x => x.FramesAtDistance(functionInputs.Spacing)).Count()} frames.");
 	}
