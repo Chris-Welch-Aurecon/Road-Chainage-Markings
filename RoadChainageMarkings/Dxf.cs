@@ -27,9 +27,9 @@ namespace RoadChainageMarkings
 				var frames = polyline.FramesAtDistance(division);
 
 				var lines = frames.ConvertAll(x => x.CreateLine(1.2));
-				var texts = frames.ConvertAll(x => x.CreateText());
+				//var texts = frames.ConvertAll(x => x.CreateText());
 				alignment[nameof(lines)] = lines;
-				alignment[nameof(texts)] = texts;
+				//alignment[nameof(texts)] = texts;
 
 			}
 
