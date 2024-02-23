@@ -16,7 +16,7 @@ namespace RoadChainageMarkings
 
 		internal static Base CreateNewModel(this IEnumerable<Polyline> polylines, double division, string filepath)
 		{
-			var @base = new Base();		
+			var @base = new Base();	
 
 			var alignments = new List<Base>();
 
@@ -30,6 +30,8 @@ namespace RoadChainageMarkings
 				//var texts = frames.ConvertAll(x => x.CreateText());
 				alignment[nameof(lines)] = lines;
 				//alignment[nameof(texts)] = texts;
+
+				alignments.Add(alignment);
 
 			}
 
