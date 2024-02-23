@@ -1,5 +1,6 @@
-﻿using netDxf;
-using Objects.Geometry;
+﻿using Objects.Geometry;
+using Objects.Other;
+using Speckle.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,61 +11,74 @@ using static RoadChainageMarkings.Geometry;
 namespace RoadChainageMarkings
 {
 
-	internal static class DxfBuilder
+	internal static class ModelBuilder
 	{
 
-		internal static void SaveToDxf(this IEnumerable<Polyline> polylines, double division, string filepath)
+		internal static Base CreateNewModel(this IEnumerable<Polyline> polylines, double division, string filepath)
 		{
-			var dxf = new DxfDocument();
+			var @base = new Base();		
+
+			var alignments = new List<Base>();
 
 			foreach (var polyline in polylines)
 			{
+				var alignment = new Base();
+
 				var frames = polyline.FramesAtDistance(division);
 
 				var lines = frames.ConvertAll(x => x.CreateLine(1.2));
 				var texts = frames.ConvertAll(x => x.CreateText());
-				dxf.Entities.Add(lines);
-				dxf.Entities.Add(texts);
+				alignment[nameof(lines)] = lines;
+				alignment[nameof(texts)] = texts;
+
 			}
 
-			dxf.DrawingVariables.InsUnits = netDxf.Units.DrawingUnits.Meters;
+			@base[nameof(alignments)] = alignments;
 
-			dxf.Save(filepath);
+			return @base;
 		}
 
 
-		internal static netDxf.Entities.Line CreateLine(this Geometry.PointDirection pd, double length)
+		internal static Line CreateLine(this Geometry.PointDirection pd, double length)
 		{
 			var (x, y, z) = (pd.Point.x, pd.Point.y, pd.Point.z);
 			var (xv, yv) = (pd.Vector.y, -pd.Vector.x);
 
-			var line = new netDxf.Entities.Line(new Vector3(
+			var line = new Line(new Point(
 				x: x + xv * length,
 				y: y + yv * length,
 				z: z),
-				new Vector3(
+				new Point(
 				x: x - xv * length,
 				y: y - yv * length,
 				z: z))
 			{
-				Color = new AciColor(1, 1, 1)
+				
 			};
 
 			return line;
 		}
 
-		internal static netDxf.Entities.Text CreateText(this PointDirection pd)
+		internal static Text CreateText(this PointDirection pd)
 		{
-			var (x, y, z, t, u, v, w) = (pd.Point.x, pd.Point.y, pd.Point.z, pd.Distance, pd.Vector.x, pd.Vector.y, pd.Vector.z);
+			throw new NotImplementedException();
 
-			var textEntity = new netDxf.Entities.Text(t.ToString(), new Vector3(x, y, z), height: 1.2)
-			{
-				Color = new AciColor(1, 1, 1),
-				Alignment = netDxf.Entities.TextAlignment.BottomCenter,
-				Normal = new Vector3(u, v, w)
-			};
-
-			return textEntity;
+			//var (x, y, z, t, u, v, w) = (pd.Point.x, pd.Point.y, pd.Point.z, pd.Distance, pd.Vector.x, pd.Vector.y, pd.Vector.z);
+			//
+			//var textEntity = new Text()
+			//{
+			//	f
+			//}
+			//	
+			//	
+			//	(t.ToString(), new Vector3(x, y, z), height: 1.2)
+			//{
+			//	Color = new AciColor(1, 1, 1),
+			//	Alignment = netDxf.Entities.TextAlignment.BottomCenter,
+			//	Normal = new Vector3(u, v, w)
+			//};
+			//
+			//return textEntity;
 		}
 	}
 

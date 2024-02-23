@@ -34,16 +34,18 @@ public static class AutomateFunction
 
 		Directory.CreateDirectory("out");
 
-		polylines.SaveToDxf(functionInputs.Spacing, outputFile);
+		var @base = polylines.CreateNewModel(functionInputs.Spacing, outputFile);
 
-		Console.WriteLine("Storing file");
-		await automationContext.StoreFileResult(outputFile);
 
 		automationContext.AttachResultToObjects(
 			Speckle.Automate.Sdk.Schema.ObjectResultLevel.Info, 
 			"Alignments",
 			curves.Select(x => x.id), 
 			"Processed curves");
+
+		var version = await automationContext.CreateNewVersionInProject(@base, "Cross Sections", $"Proceedurally generated cross sections from commit '{automationContext.AutomationRunData.VersionId}'");
+
+		if (version is string str) automationContext.SetContextView(new() { str });
 
 		automationContext.MarkRunSuccess($"Counted {polylines.Count()} polylines with {polylines.SelectMany(x => x.GetPoints()).Count()} total points. When divided by {functionInputs.Spacing}, this resulted in {polylines.SelectMany(x => x.FramesAtDistance(functionInputs.Spacing)).Count()} frames.");
 	}
