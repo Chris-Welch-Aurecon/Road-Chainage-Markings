@@ -36,14 +36,13 @@ public static class AutomateFunction
 
 		var @base = polylines.CreateNewModel(functionInputs.Spacing, outputFile);
 
-
 		automationContext.AttachResultToObjects(
 			Speckle.Automate.Sdk.Schema.ObjectResultLevel.Info, 
 			"Alignments",
 			curves.Select(x => x.id), 
 			"Processed curves");
 
-		var version = await automationContext.CreateNewVersionInProject(@base, "Cross Sections", $"Proceedurally generated cross sections from commit '{automationContext.AutomationRunData.VersionId}'");
+		var version = await automationContext.CreateNewVersionInProject(@base, "Cross Sections", $"Procedurally generated cross sections from version '{automationContext.AutomationRunData.VersionId}'");
 
 		if (version is string str) automationContext.SetContextView(new() { str });
 
